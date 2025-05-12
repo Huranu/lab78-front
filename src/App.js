@@ -1,121 +1,68 @@
-import React, { useState, useRef, useEffect } from 'react';
-import FruitList from './FruitList';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from 'react-router-dom';
+import React, { useContext } from 'react';
+import { AuthContext, AuthProvider } from './pages/AuthContextJwt';
+// import { AuthContext, AuthProvider } from './pages/AuthContext';
+import Auth from './Auth';
+import AllUsersPage from './pages/AllUsersPage';
+import PlacesPage from './pages/PlacesPage';
+import PlaceDetailPage from './pages/PlaceDetailPage';
+import AddPlacePage from './pages/AddPlacePage';
+import UpdatePlacePage from './pages/UpdatePlacePage';
 
-const LOCAL_STORAGE_KEY = 'fruitApp.fruits';
+const GuestRoute = () => {
+  const { user, loading } = useContext(AuthContext);
+  console.log('GuestRoute - user:', user, 'loading:', loading);
 
-function App() {
-  const [fruits, setFruits] = useState(() => {
-    const storedFruits = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return storedFruits ? JSON.parse(storedFruits) : [];
-  });
-
-  const fruitNameRef = useRef();
-
-  function toggleFruit(id) {
-    const newFruits = [...fruits];
-    const fruit = newFruits.find((fruit) => fruit.id === id);
-    if (!fruit) return;
-    fruit.complete = !fruit.complete;
-    setFruits(newFruits);
+  if (loading) {
+    console.log('GuestRoute - Showing loading state');
+    return <div>Loading...</div>;
   }
+  console.log('GuestRoute - Rendering:', user ? 'Redirect to /' : 'Outlet (Auth component)');
+  return user ? <Navigate to="/" replace /> : <Auth />;
+};
 
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(fruits));
-  }, [fruits]);
+const PrivateRoute = () => {
+  const { user, loading } = useContext(AuthContext);
+  console.log('PrivateRoute - user:', user, 'loading:', loading);
 
-  function handleAddFruits() {
-    const name = fruitNameRef.current.value.trim();
-    if (name === '') return;
-    setFruits((prevFruits) => [
-      ...prevFruits,
-      { id: uuidv4(), name, complete: false },
-    ]);
-    fruitNameRef.current.value = null;
+  if (loading) {
+    console.log('PrivateRoute - Showing loading state');
+    return <div>Loading...</div>;
   }
+  console.log('PrivateRoute - Rendering:', user ? 'Outlet' : 'Redirect to /auth');
+  return user ? <Outlet /> : <Navigate to="/auth" replace />;
+};
 
-  function handleClearFruits() {
-    const newFruits = fruits.filter((fruit) => !fruit.complete);
-    setFruits(newFruits);
-  }
-
+const App = () => {
   return (
-    <div style={styles.appContainer}>
-      <h1 style={styles.title}>Жимсний жагсаалт</h1>
-      <FruitList fruits={fruits} toggleFruit={toggleFruit} />
-      <div style={styles.inputContainer}>
-        <input
-          ref={fruitNameRef}
-          type="text"
-          placeholder="Жимсний нэр"
-          style={styles.input}
-        />
-        <button onClick={handleAddFruits} style={styles.button}>
-          Жагсаалт нэмэх
-        </button>
-      </div>
-      <button onClick={handleClearFruits} style={styles.clearButton}>
-        Арилгах
-      </button>
-      <div style={styles.counter}>
-        {fruits.filter((fruit) => !fruit.complete).length}-ийг нэмсэн
-      </div>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<AllUsersPage />} />
+          <Route
+            path="/auth"
+            element={
+              <GuestRoute>
+                <Auth />
+              </GuestRoute>
+            }
+          />
+          <Route path="/:uid/places/:placeId" element={<PlaceDetailPage />} />
+          <Route path="/:uid/places" element={<PlacesPage />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/:uid/places/update/:placeId" element={<UpdatePlacePage />} />
+            <Route path="/places/new" element={<AddPlacePage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-}
-
-const styles = {
-  appContainer: {
-    maxWidth: '500px',
-    margin: '50px 350px',
-    padding: '20px',
-    borderRadius: '10px',
-    backgroundColor: '#fff',
-    fontFamily: 'Arial, sans-serif',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: '24px',
-    marginBottom: '20px',
-    color: '#333',
-  },
-  inputContainer: {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '20px',
-  },
-  input: {
-    flex: '1',
-    padding: '10px',
-    borderRadius: '8px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-  },
-  button: {
-    padding: '10px 20px',
-    borderRadius: '8px',
-    border: 'none',
-    backgroundColor: '#4CAF50',
-    color: '#fff',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-  clearButton: {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '8px',
-    border: 'none',
-    backgroundColor: '#f44336',
-    color: '#fff',
-    cursor: 'pointer',
-    fontSize: '16px',
-    marginTop: '10px',
-  },
-  counter: {
-    marginTop: '10px',
-    textAlign: 'center',
-    color: '#555',
-  },
 };
 
 export default App;
