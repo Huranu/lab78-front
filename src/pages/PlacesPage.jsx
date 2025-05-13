@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './PlacesPage.css';
-// import { AuthContext } from './AuthContext';
-import { AuthContext} from './AuthContextJwt';
+import { AuthContext } from './AuthContext';
+// import { AuthContext} from './AuthContextJwt';
 
 const PlacesPage = () => {
   const [places, setPlaces] = useState([]);
@@ -11,7 +11,7 @@ const PlacesPage = () => {
   const [error, setError] = useState(null);
   const { uid } = useParams();
   const navigate = useNavigate();
-  const { user, logout, api } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -47,22 +47,22 @@ const PlacesPage = () => {
     setOpenMoreIndex(openMoreIndex === index ? null : index);
   };
 
-  const deleteJwt = async (placeId, index) => {
-    if (!user) {
-      setError('Please log in to delete places');
-      navigate('/auth');
-      return;
-    }
+  // const deleteJwt = async (placeId, index) => {
+  //   if (!user) {
+  //     setError('Please log in to delete places');
+  //     navigate('/auth');
+  //     return;
+  //   }
 
-    try {
-      await api.delete(`/places/${placeId}`);
+  //   try {
+  //     await api.delete(`/places/${placeId}`);
 
-      setPlaces(places.filter((_, i) => i !== index));
-    } catch (err) {
-      console.error('Delete place error:', err);
-      setError(err.response?.data?.error || 'Failed to delete place');
-    }
-  };
+  //     setPlaces(places.filter((_, i) => i !== index));
+  //   } catch (err) {
+  //     console.error('Delete place error:', err);
+  //     setError(err.response?.data?.error || 'Failed to delete place');
+  //   }
+  // };
 
   const deletePlace = async (placeId, index) => {
     if (!user) {
@@ -177,7 +177,7 @@ const PlacesPage = () => {
                       <div className="actions-dropdown">
                         <button 
                           className="action-button delete-button"
-                          onClick={() => deleteJwt(place.id, index)}
+                          onClick={() => deletePlace(place.id, index)}
                         >
                           Delete
                         </button>

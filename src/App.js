@@ -6,8 +6,8 @@ import {
   Outlet,
 } from 'react-router-dom';
 import React, { useContext } from 'react';
-import { AuthContext, AuthProvider } from './pages/AuthContextJwt';
-// import { AuthContext, AuthProvider } from './pages/AuthContext';
+// import { AuthContext, AuthProvider } from './pages/AuthContextJwt';
+import { AuthContext, AuthProvider } from './pages/AuthContext';
 import Auth from './Auth';
 import AllUsersPage from './pages/AllUsersPage';
 import PlacesPage from './pages/PlacesPage';

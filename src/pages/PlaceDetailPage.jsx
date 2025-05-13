@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './PlaceDetailPage.css';
-// import { AuthContext } from './AuthContext';
-import { AuthContext } from './AuthContextJwt';
+import { AuthContext } from './AuthContext';
+// import { AuthContext } from './AuthContextJwt';
 
 const PlaceDetailPage = () => {
   const { uid, placeId } = useParams();

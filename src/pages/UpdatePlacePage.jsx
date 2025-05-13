@@ -2,15 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './AddPlacePage.css';
-// import { AuthContext } from './AuthContext';
-import { AuthContext} from './AuthContextJwt';
+import { AuthContext } from './AuthContext';
+// import { AuthContext} from './AuthContextJwt';
 
 const UpdatePlacePage = () => {
   const { uid, placeId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { place } = location.state || {};
-  const { user, logout, api} = useContext(AuthContext);
+  const { user, logout} = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -116,40 +116,40 @@ const UpdatePlacePage = () => {
     }
   };
 
-  const submit = async (e) => {
-    e.preventDefault();
+  // const submit = async (e) => {
+  //   e.preventDefault();
 
-    if (!user || !uid || !placeId) {
-      setError('Missing user or place information');
-      return;
-    }
+  //   if (!user || !uid || !placeId) {
+  //     setError('Missing user or place information');
+  //     return;
+  //   }
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+  //   const validationError = validateForm();
+  //   if (validationError) {
+  //     setError(validationError);
+  //     return;
+  //   }
 
-    try {
-      const updateData = {
-        title: formData.title,
-        description: formData.description,
-        lat_long: formData.lat_long,
-        location: formData.location,
-        image: formData.image || null,
-        userId: user.id,
-      };
+  //   try {
+  //     const updateData = {
+  //       title: formData.title,
+  //       description: formData.description,
+  //       lat_long: formData.lat_long,
+  //       location: formData.location,
+  //       image: formData.image || null,
+  //       userId: user.id,
+  //     };
 
-      console.log('Sending update data:', JSON.stringify(updateData, null, 2));
-      await api.put(`/places/${placeId}`, updateData);
+  //     console.log('Sending update data:', JSON.stringify(updateData, null, 2));
+  //     await api.put(`/places/${placeId}`, updateData);
 
-      console.log('Place updated successfully');
-      navigate(`/${uid}/places`);
-    } catch (err) {
-      console.error('Update place error:', err);
-      setError(err.response?.data?.error || 'Failed to update place');
-    }
-  };
+  //     console.log('Place updated successfully');
+  //     navigate(`/${uid}/places`);
+  //   } catch (err) {
+  //     console.error('Update place error:', err);
+  //     setError(err.response?.data?.error || 'Failed to update place');
+  //   }
+  // };
 
   console.log('UpdatePlacePage rendering, user:', user);
 
@@ -186,7 +186,7 @@ const UpdatePlacePage = () => {
       <div className="add-place-container">
         <h2>Update Place</h2>
         {error && <p className="error">{error}</p>} 
-        <form onSubmit={submit} className="add-place-form">
+        <form onSubmit={handleSubmit} className="add-place-form">
           <div className="form-group">
             <label htmlFor="title">Title *</label>
             <input

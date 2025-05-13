@@ -2,12 +2,12 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AddPlacePage.css';
-// import { AuthContext } from './AuthContext';
-import { AuthContext } from './AuthContextJwt';
+import { AuthContext } from './AuthContext';
+// import { AuthContext } from './AuthContextJwt';
 
 const AddPlacePage = () => {
   const navigate = useNavigate();
-  const { user, logout, api } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -93,43 +93,43 @@ const AddPlacePage = () => {
     }
   };
 
-  const submit = async (e) => {
-    e.preventDefault();
+  // const submit = async (e) => {
+  //   e.preventDefault();
 
-    if (!user) {
-      setError('Please log in to add a place');
-      navigate('/auth');
-      return;
-    }
+  //   if (!user) {
+  //     setError('Please log in to add a place');
+  //     navigate('/auth');
+  //     return;
+  //   }
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+  //   const validationError = validateForm();
+  //   if (validationError) {
+  //     setError(validationError);
+  //     return;
+  //   }
 
-    try {
+  //   try {
 
-      const payload = {
-        title: formData.title,
-        description: formData.description,
-        lat_long: formData.lat_long,
-        location: formData.location,
-        image: formData.image,
-        userId: user.id,
-      };
+  //     const payload = {
+  //       title: formData.title,
+  //       description: formData.description,
+  //       lat_long: formData.lat_long,
+  //       location: formData.location,
+  //       image: formData.image,
+  //       userId: user.id,
+  //     };
 
-      console.log('Submitting place:', JSON.stringify(payload, null, 2));
+  //     console.log('Submitting place:', JSON.stringify(payload, null, 2));
 
-      const response = await api.post('/places', payload);
+  //     const response = await api.post('/places', payload);
 
-      console.log('API response:', response.data);
-      navigate(`/${user.id}/places`);
-    } catch (err) {
-      console.error('Add place error:', err);
-      setError(err.response?.data?.error || 'Failed to add place');
-    }
-  };
+  //     console.log('API response:', response.data);
+  //     navigate(`/${user.id}/places`);
+  //   } catch (err) {
+  //     console.error('Add place error:', err);
+  //     setError(err.response?.data?.error || 'Failed to add place');
+  //   }
+  // };
 
   console.log('AddPlacePage rendering, user:', user);
 
@@ -169,7 +169,7 @@ const AddPlacePage = () => {
         <h2>Add a New Place</h2>
         {error && <p className="error">{error}</p>}
         {user ? (
-          <form onSubmit={submit} className="add-place-form">
+          <form onSubmit={handleSubmit} className="add-place-form">
             <div className="form-group">
               <label htmlFor="title">Title *</label>
               <input
